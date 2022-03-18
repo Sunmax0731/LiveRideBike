@@ -35,7 +35,8 @@ VRMファイルの読み込みは、ファイルブラウザもしくは、フ�
     - ウェブカメラからの映像入力し、その映像から顔の位置及びロール角を認識を行い、アバターおよびバイクの状態に反映するために使用
 * [FinalIK ver 2.1](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
     - アバターの手や腰や膝、足の位置などを調整する機能を実装するために使用
-
+* [DOTween](https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676)
+    - かんたんなアニメーションの実装に使用
 * [オリジナル3Dモデル　Rgray【アルグレイ】 及びベルガモッド ©紅茶のお店](https://booth.pm/ja/items/1935911)
     - 配布アプリに組み込む予定のデフォルトのアバター及びバイク
     - [利用規約 ver 1.00](https://drive.google.com/file/d/1b5KY83wFXVeUsYrBiNEaYOse7c0y_G2o/view) =>個別条件-8ページ (6)メディア・プロダクトへの利用-R「製品開発などのためにソフトウェア（ゲームを含みます）への組み込み、容易に取り出せない状態にして配布すること => 権利者に個別に問い合わせて下さい。」とのことなので、権利者様に問い合わせ後、許可を得た後にアプリ配布開始
