@@ -58,3 +58,16 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+# 
+Assets/Plugins/RootMotion
+Assets/Plugins/UniRx
+Assets/Plugins/UniTask
+Assets/Plugins/Demigiant
+Assets/Kocha_no_omise
+Assets/OpenCVForUnity
+Assets/UniGLTF
+Assets/VRM
+Assets/VRMShaders
+Assets/*.meta
+Assets/Plugins/*.meta
+Assets/Resources/DOTweenSettings.asset*
