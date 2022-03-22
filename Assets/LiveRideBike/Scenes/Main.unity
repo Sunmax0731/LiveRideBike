@@ -167,13 +167,14 @@ GameObject:
   - component: {fileID: 519673023}
   - component: {fileID: 519673025}
   - component: {fileID: 519673024}
+  - component: {fileID: 519673026}
   m_Layer: 0
   m_Name: SubCamera2
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &519673023
 Transform:
   m_ObjectHideFlags: 0
@@ -239,6 +240,26 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &519673026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519673022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f1106d3744ef824496276c8274506b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CaptureDevice: 0
+  ResizeMode: 0
+  Timeout: 1000
+  MirrorMode: 0
+  DoubleBuffering: 0
+  EnableVSync: 0
+  TargetFrameRate: 60
+  HideWarnings: 0
 --- !u!1 &528320863
 GameObject:
   m_ObjectHideFlags: 0
@@ -280,6 +301,7 @@ GameObject:
   - component: {fileID: 558822485}
   - component: {fileID: 558822487}
   - component: {fileID: 558822486}
+  - component: {fileID: 558822488}
   m_Layer: 0
   m_Name: SubCamera1
   m_TagString: MainCamera
@@ -352,6 +374,26 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &558822488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 558822484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f1106d3744ef824496276c8274506b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CaptureDevice: 0
+  ResizeMode: 0
+  Timeout: 1000
+  MirrorMode: 0
+  DoubleBuffering: 0
+  EnableVSync: 0
+  TargetFrameRate: 60
+  HideWarnings: 0
 --- !u!1 &1139670644
 GameObject:
   m_ObjectHideFlags: 0
@@ -614,13 +656,14 @@ GameObject:
   - component: {fileID: 1793770349}
   - component: {fileID: 1793770348}
   - component: {fileID: 1793770347}
+  - component: {fileID: 1793770350}
   m_Layer: 0
   m_Name: FrontCamera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!81 &1793770347
 AudioListener:
   m_ObjectHideFlags: 0
@@ -686,6 +729,26 @@ Transform:
   m_Father: {fileID: 213357766}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!114 &1793770350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1793770346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f1106d3744ef824496276c8274506b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CaptureDevice: 0
+  ResizeMode: 0
+  Timeout: 1000
+  MirrorMode: 0
+  DoubleBuffering: 0
+  EnableVSync: 0
+  TargetFrameRate: 60
+  HideWarnings: 0
 --- !u!1 &1802957305
 GameObject:
   m_ObjectHideFlags: 0
@@ -4823,7 +4886,7 @@ Animator:
   m_GameObject: {fileID: 4232748744913891051}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 13c5b9c859d0db7448f98e363d437e45, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 326e9251d7598774c9868ec2370c4320, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
