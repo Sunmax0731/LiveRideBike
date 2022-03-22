@@ -72,3 +72,4 @@ Assets/VRMShaders
 Assets/*.meta
 Assets/Plugins/*.meta
 Assets/Resources/DOTweenSettings.asset*
+Assets/Editor
