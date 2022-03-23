@@ -394,6 +394,36 @@ MonoBehaviour:
   EnableVSync: 0
   TargetFrameRate: 60
   HideWarnings: 0
+--- !u!1 &591297884
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 591297885}
+  m_Layer: 0
+  m_Name: FaceAngle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &591297885
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 591297884}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1139670644
 GameObject:
   m_ObjectHideFlags: 0
@@ -418,7 +448,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1139670644}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.215, y: 0.664, z: -0.1455}
+  m_LocalPosition: {x: 0.215, y: 0.664, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1327409091}
@@ -448,7 +478,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1304816679}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.18, y: 0.7411, z: -0.044}
+  m_LocalPosition: {x: -0.18, y: 0.7411, z: 0.017999992}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1327409091}
@@ -3160,7 +3190,7 @@ MonoBehaviour:
       rotationWeight: 1
       bendGoal: {fileID: 1304816680}
       bendGoalWeight: 1
-      swivelOffset: 0
+      swivelOffset: 120
       bendToTargetWeight: 1
       legLengthMlp: 0.9
       stretchCurve:
@@ -3232,7 +3262,7 @@ MonoBehaviour:
       rotationWeight: 1
       bendGoal: {fileID: 1139670645}
       bendGoalWeight: 1
-      swivelOffset: 0
+      swivelOffset: -135
       bendToTargetWeight: 0.5
       legLengthMlp: 1
       stretchCurve:
