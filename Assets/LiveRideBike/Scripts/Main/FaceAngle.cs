@@ -28,28 +28,33 @@ namespace Sunmax
         public string facemark_model_filepath;
 
         [Header("Parameter")]
+        [SerializeField] private bool IsDebugMode = false;
         [SerializeField] private bool ViewWebCamImage = false;
         [SerializeField] private float RotateAngle = 0f;
         [SerializeField] private float AngleDiff = 1f;
         [SerializeField] private float MaxAngle = 10f;
         [SerializeField] private bool SkipFrame = false;
+
         void Start()
         {
+            gameObject.transform.GetComponent<MeshRenderer>().enabled = IsDebugMode;
             Utils.setDebugMode(false);
             webCamTextureToMatHelper = gameObject.GetComponent<WebCamTextureToMatHelper>();
 #if UNITY_EDITOR
             facemark_cascade_filepath = Utils.getFilePath(FACEMARK_CASCADE_FILENAME);
             facemark_model_filepath = Utils.getFilePath(FACEMARK_MODEL_FILENAME);
 #elif UNITY_STANDALONE_WIN
-            facemark_cascade_filepath = "WaraiotokoWebCam_Data/StreamingAssets/" + FACEMARK_CASCADE_FILENAME;
-            facemark_model_filepath ="WaraiotokoWebCam_Data/StreamingAssets/" +FACEMARK_MODEL_FILENAME;
+            facemark_cascade_filepath = "LiveRideBike_Data/StreamingAssets/" + FACEMARK_CASCADE_FILENAME;
+            facemark_model_filepath ="LiveRideBike_Data/StreamingAssets/" +FACEMARK_MODEL_FILENAME;
 #endif
             Run();
         }
 
         void Update()
         {
-            if (webCamTextureToMatHelper.IsPlaying() && webCamTextureToMatHelper.DidUpdateThisFrame() || SkipFrame)
+            if (SkipFrame) return;
+            Debug.Log("test");
+            if (webCamTextureToMatHelper.IsPlaying() && webCamTextureToMatHelper.DidUpdateThisFrame())
             {
                 Mat rgbaMat = webCamTextureToMatHelper.GetMat();
                 // Mat rgbaMat = RotateMat(RotateAngle);
@@ -78,11 +83,11 @@ namespace Sunmax
             {
                 List<MatOfPoint2f> landmarks = new List<MatOfPoint2f>();
                 facemark.fit(rotateGrayMat, faces, landmarks);
-                Rect[] rects = faces.toArray();
-                for (int i = 0; i < rects.Length; i++)
-                {
-                    Imgproc.rectangle(rotateGrayMat, new Point(rects[i].x, rects[i].y), new Point(rects[i].x + rects[i].width, rects[i].y + rects[i].height), new Scalar(255, 0, 0, 255), 2);
-                }
+                // Rect[] rects = faces.toArray();
+                // for (int i = 0; i < rects.Length; i++)
+                // {
+                //     Imgproc.rectangle(rotateGrayMat, new Point(rects[i].x, rects[i].y), new Point(rects[i].x + rects[i].width, rects[i].y + rects[i].height), new Scalar(255, 0, 0, 255), 2);
+                // }
 
                 //landmark
                 for (int i = 0; i < landmarks.Count; i++)
@@ -91,7 +96,7 @@ namespace Sunmax
                     float[] lm_float = new float[lm.total() * lm.channels()];
                     MatUtils.copyFromMat<float>(lm, lm_float);
 
-                    DrawFaceLandmark(rotateGrayMat, ConvertArrayToPointList(lm_float), new Scalar(0, 255, 0, 255), 2);
+                    DrawFaceLandmark(rotateGrayMat, ConvertArrayToPointList(lm_float), new Scalar(0, 255, 0, 255), 2, true);
 
                     for (int j = 0; j < lm_float.Length; j = j + 2)
                     {
@@ -115,8 +120,8 @@ namespace Sunmax
                 }
                 else
                 {
-                    DetectFace();
                     SkipFrame = true;
+                    DetectFace();
                 }
                 SkipFrame = false;
             }
@@ -249,7 +254,7 @@ namespace Sunmax
             if (drawIndexNumbers)
             {
                 for (int i = 0; i < points.Count; ++i)
-                    Imgproc.putText(imgMat, i.ToString(), points[i], Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(255, 255, 255, 255), 1, Imgproc.LINE_AA, false);
+                    Imgproc.putText(imgMat, i.ToString(), points[i], Imgproc.FONT_HERSHEY_SIMPLEX, 0.25, new Scalar(0, 0, 0, 255), 1, Imgproc.LINE_AA, false);
             }
         }
         private List<Point> ConvertArrayToPointList(float[] arr, List<Point> pts = null)
