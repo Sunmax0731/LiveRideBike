@@ -61,60 +61,65 @@ namespace Sunmax
                 Imgproc.cvtColor(rgbaMat, grayMat, Imgproc.COLOR_RGBA2GRAY);
                 Imgproc.equalizeHist(grayMat, grayMat);
 
-                var rotateGrayMat = RotateMat(RotateAngle, grayMat);
-
                 // detect faces
-                cascade.detectMultiScale(rotateGrayMat, faces, 1.1, 2, 2,
-                    new Size(rotateGrayMat.cols() * 0.2, rotateGrayMat.rows() * 0.2), new Size());
+                DetectFace();
+            }
+        }
 
-                if (faces.total() != 0)
+        void DetectFace()
+        {
+            var rotateGrayMat = RotateMat(RotateAngle, grayMat);
+
+            cascade.detectMultiScale(rotateGrayMat, faces, 1.1, 2, 2,
+                                new Size(rotateGrayMat.cols() * 0.2, rotateGrayMat.rows() * 0.2), new Size());
+
+            if (faces.total() != 0)
+            {
+                List<MatOfPoint2f> landmarks = new List<MatOfPoint2f>();
+                facemark.fit(rotateGrayMat, faces, landmarks);
+                Rect[] rects = faces.toArray();
+                for (int i = 0; i < rects.Length; i++)
                 {
-                    List<MatOfPoint2f> landmarks = new List<MatOfPoint2f>();
-                    facemark.fit(rotateGrayMat, faces, landmarks);
-                    Rect[] rects = faces.toArray();
-                    for (int i = 0; i < rects.Length; i++)
+                    Imgproc.rectangle(rotateGrayMat, new Point(rects[i].x, rects[i].y), new Point(rects[i].x + rects[i].width, rects[i].y + rects[i].height), new Scalar(255, 0, 0, 255), 2);
+                }
+
+                //landmark
+                for (int i = 0; i < landmarks.Count; i++)
+                {
+                    MatOfPoint2f lm = landmarks[i];
+                    float[] lm_float = new float[lm.total() * lm.channels()];
+                    MatUtils.copyFromMat<float>(lm, lm_float);
+
+                    DrawFaceLandmark(rotateGrayMat, ConvertArrayToPointList(lm_float), new Scalar(0, 255, 0, 255), 2);
+
+                    for (int j = 0; j < lm_float.Length; j = j + 2)
                     {
-                        Imgproc.rectangle(rotateGrayMat, new Point(rects[i].x, rects[i].y), new Point(rects[i].x + rects[i].width, rects[i].y + rects[i].height), new Scalar(255, 0, 0, 255), 2);
+                        Point p = new Point(lm_float[j], lm_float[j + 1]);
+                        Imgproc.circle(rotateGrayMat, p, 2, new Scalar(255, 0, 0, 255), 1);
                     }
-
-                    //landmark
-                    for (int i = 0; i < landmarks.Count; i++)
-                    {
-                        MatOfPoint2f lm = landmarks[i];
-                        float[] lm_float = new float[lm.total() * lm.channels()];
-                        MatUtils.copyFromMat<float>(lm, lm_float);
-
-                        DrawFaceLandmark(rotateGrayMat, ConvertArrayToPointList(lm_float), new Scalar(0, 255, 0, 255), 2);
-
-                        for (int j = 0; j < lm_float.Length; j = j + 2)
-                        {
-                            Point p = new Point(lm_float[j], lm_float[j + 1]);
-                            Imgproc.circle(rotateGrayMat, p, 2, new Scalar(255, 0, 0, 255), 1);
-                        }
-                    }
+                }
+            }
+            else
+            {
+                RotateAngle = RotateAngle + AngleDiff;
+                if (RotateAngle >= MaxAngle)
+                {
+                    AngleDiff = -1f;
+                    return;
+                }
+                else if (RotateAngle <= -MaxAngle)
+                {
+                    AngleDiff = 1f;
+                    return;
                 }
                 else
                 {
-                    RotateAngle = RotateAngle + AngleDiff;
-                    if (RotateAngle > MaxAngle)
-                    {
-                        AngleDiff = -1f;
-                        return;
-                    }
-                    else if (RotateAngle < -MaxAngle)
-                    {
-                        AngleDiff = 1f;
-                        return;
-                    }
-                    else
-                    {
-                        Update();
-                    }
+                    DetectFace();
                 }
-                if (ViewWebCamImage)
-                {
-                    Utils.matToTexture2D(rotateGrayMat, texture);
-                }
+            }
+            if (ViewWebCamImage)
+            {
+                Utils.matToTexture2D(rotateGrayMat, texture);
             }
         }
 
