@@ -32,6 +32,7 @@ namespace Sunmax
         [SerializeField] private float RotateAngle = 0f;
         [SerializeField] private float AngleDiff = 1f;
         [SerializeField] private float MaxAngle = 10f;
+        [SerializeField] private bool SkipFrame = false;
         void Start()
         {
             Utils.setDebugMode(false);
@@ -48,7 +49,7 @@ namespace Sunmax
 
         void Update()
         {
-            if (webCamTextureToMatHelper.IsPlaying() && webCamTextureToMatHelper.DidUpdateThisFrame())
+            if (webCamTextureToMatHelper.IsPlaying() && webCamTextureToMatHelper.DidUpdateThisFrame() || SkipFrame)
             {
                 Mat rgbaMat = webCamTextureToMatHelper.GetMat();
                 // Mat rgbaMat = RotateMat(RotateAngle);
@@ -115,7 +116,9 @@ namespace Sunmax
                 else
                 {
                     DetectFace();
+                    SkipFrame = true;
                 }
+                SkipFrame = false;
             }
             if (ViewWebCamImage)
             {
