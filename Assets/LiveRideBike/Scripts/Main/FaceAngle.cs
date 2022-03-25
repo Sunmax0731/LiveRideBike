@@ -103,7 +103,6 @@ namespace Sunmax
                 FaceTiltAngle = CVUtil.DrawLandMark(
                     rotateGrayMat, landmarks, RotateAngle,
                     IsDrawIndexNumber, IsDrawLandmarkLine, IsDrawLandmarkPointOutline);
-
             }
             //検出した顔が１つもなければ処理する画像を回転させて再度検出処理を行う
             else
