@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Cysharp.Threading.Tasks.Triggers;
 using DG.Tweening;
 using OpenCVForUnity.CoreModule;
 using OpenCVForUnity.FaceModule;
@@ -11,8 +12,8 @@ using OpenCVForUnity.UnityUtils;
 using OpenCVForUnity.UnityUtils.Helper;
 using OpenCVForUnity.UtilsModule;
 using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
-using Rect = OpenCVForUnity.CoreModule.Rect;
 
 namespace Sunmax
 {
@@ -31,21 +32,19 @@ namespace Sunmax
         public string facemark_model_filepath;
 
         [Header("Parameter")]
-        [SerializeField] private BoolReactiveProperty IsDebugMode = new BoolReactiveProperty(true);
-        [SerializeField] private bool IsDrawIndexNumber = false;
-        [SerializeField] private bool ViewWebCamImage = false;
-        [SerializeField] private float RotateAngle = 0f;
-        [SerializeField] private float AngleDiff = 1f;
-        [SerializeField] private float MaxAngle = 10f;
-        [SerializeField] private bool SkipFrame = false;
-
+        [HideInInspector, Tooltip("画像のZ軸角度")] private float RotateAngle = 0f;
+        [HideInInspector, Tooltip("画像を回転させるときの1回あたりの角度")] private float AngleDiff = 1f;
+        [HideInInspector, Range(10f, 45f), Tooltip("画像のZ軸の最大角度の絶対視")] private float MaxAngle = 10f;
+        [HideInInspector, Tooltip("顔認識できなかったときにUpdateをスキップするフラグ")] private bool SkipFrame = false;
+        [SerializeField] private ReactiveProperty<float> FaceTiltAngle;
+        [Header("Debug用パラメータ"), Tooltip("以下、デバッグ時のON/OFFフラグ")]
+        [HideInInspector] private bool IsUpdateResultImage = true;
+        [HideInInspector] private BoolReactiveProperty IsEnableMeshRenderer = new BoolReactiveProperty(false);
+        [HideInInspector] private bool IsDrawIndexNumber = false;
+        [HideInInspector] private bool IsDrawLandmarkPointOutline = false;
+        [HideInInspector] private bool IsDrawLandmarkLine = false;
         void Start()
         {
-            IsDebugMode.Subscribe(x =>
-            {
-                gameObject.transform.GetComponent<MeshRenderer>().enabled = x;
-            }).AddTo(this);
-
             Utils.setDebugMode(false);
             webCamTextureToMatHelper = gameObject.GetComponent<WebCamTextureToMatHelper>();
 #if UNITY_EDITOR
@@ -56,37 +55,38 @@ namespace Sunmax
             facemark_model_filepath ="LiveRideBike_Data/StreamingAssets/" +FACEMARK_MODEL_FILENAME;
 #endif
             Run();
+
+            //メッシュレンダラーを非表示
+            IsEnableMeshRenderer.Subscribe(x => { gameObject.transform.GetComponent<MeshRenderer>().enabled = x; }).AddTo(this);
+            //傾きをモデルに反映
+            FaceTiltAngle.Subscribe(x => { }).AddTo(this);
+            //Updateをストリームに変換
+            this.UpdateAsObservable().Subscribe(_ => { WebCamImg2DetectFace(); }).AddTo(this);
         }
 
-        void Update()
+        private void WebCamImg2DetectFace()
         {
+            if (facemark == null || cascade == null) return;
             if (SkipFrame) return;
-            if (webCamTextureToMatHelper.IsPlaying() && webCamTextureToMatHelper.DidUpdateThisFrame())
-            {
-                Mat rgbaMat = webCamTextureToMatHelper.GetMat();
-                // Mat rgbaMat = RotateMat(RotateAngle);
-                if (facemark == null || cascade == null)
-                {
-                    Utils.matToTexture2D(rgbaMat, texture);
-                    return;
-                }
+            if (!webCamTextureToMatHelper.IsPlaying() || !webCamTextureToMatHelper.DidUpdateThisFrame()) return;
 
-                Imgproc.cvtColor(rgbaMat, grayMat, Imgproc.COLOR_RGBA2GRAY);
-                Imgproc.equalizeHist(grayMat, grayMat);
-
-                // detect faces
-                DetectFace();
-            }
+            //グレースケールに変換            
+            Imgproc.cvtColor(webCamTextureToMatHelper.GetMat(), grayMat, Imgproc.COLOR_RGBA2GRAY);
+            //ヒストグラムを平坦化し明るさを調整
+            Imgproc.equalizeHist(grayMat, grayMat);
+            //顔認識しその結果を取得
+            var mat = DetectFace();
+            if (IsUpdateResultImage) Utils.matToTexture2D(mat, texture);
         }
 
-        void DetectFace()
+        Mat DetectFace()
         {
-            var rotateGrayMat = RotateMat(RotateAngle, grayMat);
+            var rotateGrayMat = CVUtil.RotateMat(RotateAngle, grayMat);
 
             cascade.detectMultiScale(rotateGrayMat, faces, 1.1, 2, 2,
                                 new Size(rotateGrayMat.cols() * 0.2, rotateGrayMat.rows() * 0.2), new Size());
 
-            if (faces.total() != 0)
+            if (faces.total() == 1)
             {
                 List<MatOfPoint2f> landmarks = new List<MatOfPoint2f>();
                 facemark.fit(rotateGrayMat, faces, landmarks);
@@ -97,40 +97,41 @@ namespace Sunmax
                     MatOfPoint2f lm = landmarks[i];
                     float[] lm_float = new float[lm.total() * lm.channels()];
                     MatUtils.copyFromMat<float>(lm, lm_float);
+                    var points = CVUtil.ConvertArrayToPointList(lm_float);
+                    FaceTiltAngle.Value = CalculateFaceTiltAngle(points[0], points[16]) + RotateAngle;
+                    CVUtil.DrawFaceLandmark(rotateGrayMat, points, new Scalar(0, 0, 0, 255), 2, IsDrawIndexNumber, IsDrawLandmarkLine);
 
-                    DrawFaceLandmark(rotateGrayMat, ConvertArrayToPointList(lm_float), new Scalar(0, 0, 0, 255), 2, IsDrawIndexNumber);
-
-                    // for (int j = 0; j < lm_float.Length; j = j + 2)
-                    // {
-                    //     Point p = new Point(lm_float[j], lm_float[j + 1]);
-                    //     Imgproc.circle(rotateGrayMat, p, 2, new Scalar(255, 0, 0, 255), 1);
-                    // }
+                    if (IsDrawLandmarkPointOutline)
+                    {
+                        for (int j = 0; j < lm_float.Length; j = j + 2)
+                        {
+                            Imgproc.circle(rotateGrayMat, new Point(lm_float[j], lm_float[j + 1]), 2, new Scalar(255, 0, 0, 255), 1);
+                        }
+                    }
                 }
             }
             else
             {
-                RotateAngle = RotateAngle + AngleDiff;
-                if (RotateAngle >= MaxAngle)
+                if (RotateAngle + AngleDiff >= MaxAngle)
                 {
                     AngleDiff = -1f;
-                    return;
+                    return rotateGrayMat;
                 }
-                else if (RotateAngle <= -MaxAngle)
+                else if (RotateAngle + AngleDiff <= -MaxAngle)
                 {
                     AngleDiff = 1f;
-                    return;
+                    return rotateGrayMat;
                 }
                 else
                 {
+                    RotateAngle = RotateAngle + AngleDiff;
                     SkipFrame = true;
                     DetectFace();
                 }
                 SkipFrame = false;
             }
-            if (ViewWebCamImage)
-            {
-                Utils.matToTexture2D(rotateGrayMat, texture);
-            }
+
+            return rotateGrayMat;
         }
 
         void Run()
@@ -143,146 +144,29 @@ namespace Sunmax
         public void OnWebCamTextureToMatHelperInitialized()
         {
             Mat webCamTextureMat = webCamTextureToMatHelper.GetMat();
-
             texture = new Texture2D(webCamTextureMat.cols(), webCamTextureMat.rows(), TextureFormat.RGBA32, false);
             Utils.matToTexture2D(webCamTextureMat, texture);
-
             gameObject.GetComponent<Renderer>().material.mainTexture = texture;
-
             gameObject.transform.localScale = new Vector3(webCamTextureMat.cols(), webCamTextureMat.rows(), 1);
-
-            float width = webCamTextureMat.width();
-            float height = webCamTextureMat.height();
-
-            float widthScale = (float)Screen.width / width;
-            float heightScale = (float)Screen.height / height;
-            if (widthScale < heightScale)
-            {
-                Camera.main.orthographicSize = (width * (float)Screen.height / (float)Screen.width) / 2;
-            }
-            else
-            {
-                Camera.main.orthographicSize = height / 2;
-            }
-
             grayMat = new Mat(webCamTextureMat.rows(), webCamTextureMat.cols(), CvType.CV_8UC1);
-
             faces = new MatOfRect();
         }
         public void OnWebCamTextureToMatHelperDisposed()
         {
             Debug.Log("OnWebCamTextureToMatHelperDisposed");
-
-            if (grayMat != null)
-                grayMat.Dispose();
-
-
-            if (texture != null)
-            {
-                Texture2D.Destroy(texture);
-                texture = null;
-            }
-
-            if (faces != null)
-                faces.Dispose();
+            if (grayMat != null) grayMat.Dispose();
+            if (texture != null) Texture2D.Destroy(texture);
+            if (faces != null) faces.Dispose();
+            texture = null;
         }
         public void OnWebCamTextureToMatHelperErrorOccurred(WebCamTextureToMatHelper.ErrorCode errorCode)
         {
             Debug.Log("OnWebCamTextureToMatHelperErrorOccurred " + errorCode);
         }
-        private Mat RotateMat(float rotate, Mat source)
+
+        private float CalculateFaceTiltAngle(Point pointA, Point pointB)
         {
-            var mat = source;
-            var center = new Point(mat.cols() / 2, mat.cols() / 2);
-            Mat rMat = Imgproc.getRotationMatrix2D(center, rotate, 1);
-            Mat dest = new Mat();
-            Imgproc.warpAffine(mat, dest, rMat, new Size(texture.width, texture.height));
-            return dest;
-        }
-        private void DrawFaceLandmark(Mat imgMat, List<Point> points, Scalar color, int thickness, bool drawIndexNumbers = false)
-        {
-            if (points.Count == 5)
-            {
-
-                Imgproc.line(imgMat, points[0], points[1], color, thickness);
-                Imgproc.line(imgMat, points[1], points[4], color, thickness);
-                Imgproc.line(imgMat, points[4], points[3], color, thickness);
-                Imgproc.line(imgMat, points[3], points[2], color, thickness);
-
-            }
-            else if (points.Count == 68)
-            {
-                //顔の外枠
-                for (int i = 1; i <= 16; ++i)
-                    Imgproc.line(imgMat, points[i], points[i - 1], color, thickness);
-
-                //
-                for (int i = 28; i <= 30; ++i)
-                    Imgproc.line(imgMat, points[i], points[i - 1], color, thickness);
-
-                for (int i = 18; i <= 21; ++i)
-                    Imgproc.line(imgMat, points[i], points[i - 1], color, thickness);
-                for (int i = 23; i <= 26; ++i)
-                    Imgproc.line(imgMat, points[i], points[i - 1], color, thickness);
-                for (int i = 31; i <= 35; ++i)
-                    Imgproc.line(imgMat, points[i], points[i - 1], color, thickness);
-                Imgproc.line(imgMat, points[30], points[35], color, thickness);
-
-                for (int i = 37; i <= 41; ++i)
-                    Imgproc.line(imgMat, points[i], points[i - 1], color, thickness);
-                Imgproc.line(imgMat, points[36], points[41], color, thickness);
-
-                for (int i = 43; i <= 47; ++i)
-                    Imgproc.line(imgMat, points[i], points[i - 1], color, thickness);
-                Imgproc.line(imgMat, points[42], points[47], color, thickness);
-
-                for (int i = 49; i <= 59; ++i)
-                    Imgproc.line(imgMat, points[i], points[i - 1], color, thickness);
-                Imgproc.line(imgMat, points[48], points[59], color, thickness);
-
-                for (int i = 61; i <= 67; ++i)
-                    Imgproc.line(imgMat, points[i], points[i - 1], color, thickness);
-                Imgproc.line(imgMat, points[60], points[67], color, thickness);
-            }
-            else
-            {
-                for (int i = 0; i < points.Count; i++)
-                {
-                    Imgproc.circle(imgMat, points[i], 2, color, -1);
-                }
-            }
-
-            // Draw the index number of facelandmark points.
-            if (drawIndexNumbers)
-            {
-                for (int i = 0; i < points.Count; ++i)
-                    Imgproc.putText(imgMat, i.ToString(), points[i], Imgproc.FONT_HERSHEY_SIMPLEX, 0.2, new Scalar(255, 255, 255, 255), 1, Imgproc.LINE_AA, false);
-            }
-        }
-        private List<Point> ConvertArrayToPointList(float[] arr, List<Point> pts = null)
-        {
-            if (pts == null)
-            {
-                pts = new List<Point>();
-            }
-
-            if (pts.Count != arr.Length / 2)
-            {
-                pts.Clear();
-                for (int i = 0; i < arr.Length / 2; i++)
-                {
-                    pts.Add(new Point());
-                }
-            }
-
-            for (int i = 0; i < pts.Count; ++i)
-            {
-                pts[i].x = arr[i * 2];
-                pts[i].y = arr[i * 2 + 1];
-            }
-
-            return pts;
+            return Mathf.Atan2((float)pointB.y - (float)pointA.y, (float)pointB.x - (float)pointA.x) * 180f / Mathf.PI;
         }
     }
 }
-
