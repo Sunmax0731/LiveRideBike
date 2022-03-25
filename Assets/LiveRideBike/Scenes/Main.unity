@@ -442,7 +442,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   facemark_cascade_filepath: 
   facemark_model_filepath: 
-  IsDebugMode: 1
+  IsDebugMode:
+    value: 1
+  IsDrawIndexNumber: 0
   ViewWebCamImage: 1
   RotateAngle: 0
   AngleDiff: 1

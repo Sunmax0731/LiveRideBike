@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using OpenCVForUnity.CoreModule;
 using OpenCVForUnity.FaceModule;
@@ -9,8 +10,10 @@ using OpenCVForUnity.ObjdetectModule;
 using OpenCVForUnity.UnityUtils;
 using OpenCVForUnity.UnityUtils.Helper;
 using OpenCVForUnity.UtilsModule;
+using UniRx;
 using UnityEngine;
 using Rect = OpenCVForUnity.CoreModule.Rect;
+
 namespace Sunmax
 {
     public class FaceAngle : MonoBehaviour
@@ -28,7 +31,8 @@ namespace Sunmax
         public string facemark_model_filepath;
 
         [Header("Parameter")]
-        [SerializeField] private bool IsDebugMode = false;
+        [SerializeField] private BoolReactiveProperty IsDebugMode = new BoolReactiveProperty(true);
+        [SerializeField] private bool IsDrawIndexNumber = false;
         [SerializeField] private bool ViewWebCamImage = false;
         [SerializeField] private float RotateAngle = 0f;
         [SerializeField] private float AngleDiff = 1f;
@@ -37,7 +41,11 @@ namespace Sunmax
 
         void Start()
         {
-            gameObject.transform.GetComponent<MeshRenderer>().enabled = IsDebugMode;
+            IsDebugMode.Subscribe(x =>
+            {
+                gameObject.transform.GetComponent<MeshRenderer>().enabled = x;
+            }).AddTo(this);
+
             Utils.setDebugMode(false);
             webCamTextureToMatHelper = gameObject.GetComponent<WebCamTextureToMatHelper>();
 #if UNITY_EDITOR
@@ -53,7 +61,6 @@ namespace Sunmax
         void Update()
         {
             if (SkipFrame) return;
-            Debug.Log("test");
             if (webCamTextureToMatHelper.IsPlaying() && webCamTextureToMatHelper.DidUpdateThisFrame())
             {
                 Mat rgbaMat = webCamTextureToMatHelper.GetMat();
@@ -83,11 +90,6 @@ namespace Sunmax
             {
                 List<MatOfPoint2f> landmarks = new List<MatOfPoint2f>();
                 facemark.fit(rotateGrayMat, faces, landmarks);
-                // Rect[] rects = faces.toArray();
-                // for (int i = 0; i < rects.Length; i++)
-                // {
-                //     Imgproc.rectangle(rotateGrayMat, new Point(rects[i].x, rects[i].y), new Point(rects[i].x + rects[i].width, rects[i].y + rects[i].height), new Scalar(255, 0, 0, 255), 2);
-                // }
 
                 //landmark
                 for (int i = 0; i < landmarks.Count; i++)
@@ -96,13 +98,13 @@ namespace Sunmax
                     float[] lm_float = new float[lm.total() * lm.channels()];
                     MatUtils.copyFromMat<float>(lm, lm_float);
 
-                    DrawFaceLandmark(rotateGrayMat, ConvertArrayToPointList(lm_float), new Scalar(0, 255, 0, 255), 2, true);
+                    DrawFaceLandmark(rotateGrayMat, ConvertArrayToPointList(lm_float), new Scalar(0, 0, 0, 255), 2, IsDrawIndexNumber);
 
-                    for (int j = 0; j < lm_float.Length; j = j + 2)
-                    {
-                        Point p = new Point(lm_float[j], lm_float[j + 1]);
-                        Imgproc.circle(rotateGrayMat, p, 2, new Scalar(255, 0, 0, 255), 1);
-                    }
+                    // for (int j = 0; j < lm_float.Length; j = j + 2)
+                    // {
+                    //     Point p = new Point(lm_float[j], lm_float[j + 1]);
+                    //     Imgproc.circle(rotateGrayMat, p, 2, new Scalar(255, 0, 0, 255), 1);
+                    // }
                 }
             }
             else
@@ -190,7 +192,6 @@ namespace Sunmax
         }
         private Mat RotateMat(float rotate, Mat source)
         {
-            // var mat = webCamTextureToMatHelper.GetMat();
             var mat = source;
             var center = new Point(mat.cols() / 2, mat.cols() / 2);
             Mat rMat = Imgproc.getRotationMatrix2D(center, rotate, 1);
@@ -211,10 +212,11 @@ namespace Sunmax
             }
             else if (points.Count == 68)
             {
-
+                //顔の外枠
                 for (int i = 1; i <= 16; ++i)
                     Imgproc.line(imgMat, points[i], points[i - 1], color, thickness);
 
+                //
                 for (int i = 28; i <= 30; ++i)
                     Imgproc.line(imgMat, points[i], points[i - 1], color, thickness);
 
@@ -254,7 +256,7 @@ namespace Sunmax
             if (drawIndexNumbers)
             {
                 for (int i = 0; i < points.Count; ++i)
-                    Imgproc.putText(imgMat, i.ToString(), points[i], Imgproc.FONT_HERSHEY_SIMPLEX, 0.25, new Scalar(0, 0, 0, 255), 1, Imgproc.LINE_AA, false);
+                    Imgproc.putText(imgMat, i.ToString(), points[i], Imgproc.FONT_HERSHEY_SIMPLEX, 0.2, new Scalar(255, 255, 255, 255), 1, Imgproc.LINE_AA, false);
             }
         }
         private List<Point> ConvertArrayToPointList(float[] arr, List<Point> pts = null)
