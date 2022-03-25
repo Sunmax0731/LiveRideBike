@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using OpenCVForUnity.CoreModule;
 using OpenCVForUnity.ImgprocModule;
+using OpenCVForUnity.UtilsModule;
 using UnityEngine;
 
 namespace Sunmax
@@ -98,6 +99,37 @@ namespace Sunmax
             }
 
             return pts;
+        }
+        public static void DrawLandmarkPointOutline(Mat mat, float[] landmarks)
+        {
+            for (int j = 0; j < landmarks.Length; j = j + 2)
+            {
+                Imgproc.circle(mat, new Point(landmarks[j], landmarks[j + 1]), 2, new Scalar(255, 0, 0, 255), 1);
+            }
+        }
+        public static float DrawLandMark(Mat mat, List<MatOfPoint2f> landmarks, float angle, bool isDrawIndexNumber, bool isDrawLandmarkLine, bool isDrawLandmarkPointOutline)
+        {
+            var tilt = 0f;
+            for (int i = 0; i < landmarks.Count; i++)
+            {
+                MatOfPoint2f lm = landmarks[i];
+                float[] lm_float = new float[lm.total() * lm.channels()];
+                MatUtils.copyFromMat<float>(lm, lm_float);
+                var points = CVUtil.ConvertArrayToPointList(lm_float);
+                tilt = CalculateFaceTiltAngle(points[0], points[16]) + angle;
+                CVUtil.DrawFaceLandmark(mat, points, new Scalar(0, 0, 0, 255), 2, isDrawIndexNumber, isDrawLandmarkLine);
+
+                if (isDrawLandmarkPointOutline)
+                {
+                    CVUtil.DrawLandmarkPointOutline(mat, lm_float);
+                }
+            }
+
+            return tilt;
+        }
+        public static float CalculateFaceTiltAngle(Point pointA, Point pointB)
+        {
+            return Mathf.Atan2((float)pointB.y - (float)pointA.y, (float)pointB.x - (float)pointA.x) * 180f / Mathf.PI;
         }
     }
 }

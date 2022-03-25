@@ -19,6 +19,12 @@ namespace Sunmax
 {
     public class FaceAngle : MonoBehaviour
     {
+        [Header("学習モデルファイル")]
+        public string facemark_cascade_filepath;
+        protected static readonly string FACEMARK_CASCADE_FILENAME = "objdetect/lbpcascade_frontalface.xml";
+        public string facemark_model_filepath;
+        protected static readonly string FACEMARK_MODEL_FILENAME = "face/lbfmodel.yaml";
+
         [Header("OpenCV")]
         Mat grayMat;
         Texture2D texture;
@@ -26,23 +32,22 @@ namespace Sunmax
         MatOfRect faces;
         WebCamTextureToMatHelper webCamTextureToMatHelper;
         Facemark facemark;
-        protected static readonly string FACEMARK_CASCADE_FILENAME = "objdetect/lbpcascade_frontalface.xml";
-        public string facemark_cascade_filepath;
-        protected static readonly string FACEMARK_MODEL_FILENAME = "face/lbfmodel.yaml";
-        public string facemark_model_filepath;
-
         [Header("Parameter")]
+        [SerializeField] private float FaceTiltAngle;
         [HideInInspector, Tooltip("画像のZ軸角度")] private float RotateAngle = 0f;
         [HideInInspector, Tooltip("画像を回転させるときの1回あたりの角度")] private float AngleDiff = 1f;
-        [HideInInspector, Range(10f, 45f), Tooltip("画像のZ軸の最大角度の絶対視")] private float MaxAngle = 10f;
+        [HideInInspector, Range(10f, 45f), Tooltip("画像のZ軸の最大角度の絶対視")] private float MaxAngle = 45f;
         [HideInInspector, Tooltip("顔認識できなかったときにUpdateをスキップするフラグ")] private bool SkipFrame = false;
-        [SerializeField] private ReactiveProperty<float> FaceTiltAngle;
+
         [Header("Debug用パラメータ"), Tooltip("以下、デバッグ時のON/OFFフラグ")]
-        [HideInInspector] private bool IsUpdateResultImage = true;
-        [HideInInspector] private BoolReactiveProperty IsEnableMeshRenderer = new BoolReactiveProperty(false);
-        [HideInInspector] private bool IsDrawIndexNumber = false;
-        [HideInInspector] private bool IsDrawLandmarkPointOutline = false;
-        [HideInInspector] private bool IsDrawLandmarkLine = false;
+        [SerializeField] private BoolReactiveProperty IsEnableMeshRenderer = new BoolReactiveProperty(false);
+        [SerializeField] private bool IsUpdateResultImage = true;
+        [SerializeField] private bool IsDrawIndexNumber = false;
+        [SerializeField] private bool IsDrawLandmarkPointOutline = false;
+        [SerializeField] private bool IsDrawLandmarkLine = false;
+
+        [Header("Component")]
+        [SerializeField] private BikeModelController _BikeModelController;
         void Start()
         {
             Utils.setDebugMode(false);
@@ -58,8 +63,7 @@ namespace Sunmax
 
             //メッシュレンダラーを非表示
             IsEnableMeshRenderer.Subscribe(x => { gameObject.transform.GetComponent<MeshRenderer>().enabled = x; }).AddTo(this);
-            //傾きをモデルに反映
-            FaceTiltAngle.Subscribe(x => { }).AddTo(this);
+
             //Updateをストリームに変換
             this.UpdateAsObservable().Subscribe(_ => { WebCamImg2DetectFace(); }).AddTo(this);
         }
@@ -67,7 +71,6 @@ namespace Sunmax
         private void WebCamImg2DetectFace()
         {
             if (facemark == null || cascade == null) return;
-            if (SkipFrame) return;
             if (!webCamTextureToMatHelper.IsPlaying() || !webCamTextureToMatHelper.DidUpdateThisFrame()) return;
 
             //グレースケールに変換            
@@ -75,6 +78,7 @@ namespace Sunmax
             //ヒストグラムを平坦化し明るさを調整
             Imgproc.equalizeHist(grayMat, grayMat);
             //顔認識しその結果を取得
+            // var rotateGrayMat = CVUtil.RotateMat(RotateAngle, grayMat);
             var mat = DetectFace();
             if (IsUpdateResultImage) Utils.matToTexture2D(mat, texture);
         }
@@ -83,54 +87,37 @@ namespace Sunmax
         {
             var rotateGrayMat = CVUtil.RotateMat(RotateAngle, grayMat);
 
-            cascade.detectMultiScale(rotateGrayMat, faces, 1.1, 2, 2,
-                                new Size(rotateGrayMat.cols() * 0.2, rotateGrayMat.rows() * 0.2), new Size());
+            //顔検出
+            cascade.detectMultiScale(
+                rotateGrayMat, faces, 1.1, 2, 2,
+                new Size(rotateGrayMat.cols() * 0.2, rotateGrayMat.rows() * 0.2));
 
+            //検出した顔が１つであれば処理
             if (faces.total() == 1)
             {
+                //ランドマークを検出
                 List<MatOfPoint2f> landmarks = new List<MatOfPoint2f>();
                 facemark.fit(rotateGrayMat, faces, landmarks);
 
-                //landmark
-                for (int i = 0; i < landmarks.Count; i++)
-                {
-                    MatOfPoint2f lm = landmarks[i];
-                    float[] lm_float = new float[lm.total() * lm.channels()];
-                    MatUtils.copyFromMat<float>(lm, lm_float);
-                    var points = CVUtil.ConvertArrayToPointList(lm_float);
-                    FaceTiltAngle.Value = CalculateFaceTiltAngle(points[0], points[16]) + RotateAngle;
-                    CVUtil.DrawFaceLandmark(rotateGrayMat, points, new Scalar(0, 0, 0, 255), 2, IsDrawIndexNumber, IsDrawLandmarkLine);
+                //ランドマークを描画
+                FaceTiltAngle = CVUtil.DrawLandMark(
+                    rotateGrayMat, landmarks, RotateAngle,
+                    IsDrawIndexNumber, IsDrawLandmarkLine, IsDrawLandmarkPointOutline);
 
-                    if (IsDrawLandmarkPointOutline)
-                    {
-                        for (int j = 0; j < lm_float.Length; j = j + 2)
-                        {
-                            Imgproc.circle(rotateGrayMat, new Point(lm_float[j], lm_float[j + 1]), 2, new Scalar(255, 0, 0, 255), 1);
-                        }
-                    }
-                }
             }
+            //検出した顔が１つもなければ処理する画像を回転させて再度検出処理を行う
             else
             {
-                if (RotateAngle + AngleDiff >= MaxAngle)
-                {
-                    AngleDiff = -1f;
-                    return rotateGrayMat;
-                }
-                else if (RotateAngle + AngleDiff <= -MaxAngle)
-                {
-                    AngleDiff = 1f;
-                    return rotateGrayMat;
-                }
-                else
+                //回転させる角度が指定した範囲内であれば増分し検出処理を行う
+                if (Math.Abs(RotateAngle + AngleDiff) < MaxAngle)
                 {
                     RotateAngle = RotateAngle + AngleDiff;
-                    SkipFrame = true;
                     DetectFace();
                 }
-                SkipFrame = false;
+                //範囲外であれば増分値の符号を反転させる
+                else AngleDiff *= -1f;
             }
-
+            _BikeModelController.LeanBikeModel(FaceTiltAngle);
             return rotateGrayMat;
         }
 
@@ -164,9 +151,5 @@ namespace Sunmax
             Debug.Log("OnWebCamTextureToMatHelperErrorOccurred " + errorCode);
         }
 
-        private float CalculateFaceTiltAngle(Point pointA, Point pointB)
-        {
-            return Mathf.Atan2((float)pointB.y - (float)pointA.y, (float)pointB.x - (float)pointA.x) * 180f / Mathf.PI;
-        }
     }
 }

@@ -473,6 +473,7 @@ GameObject:
   - component: {fileID: 591297887}
   - component: {fileID: 591297888}
   - component: {fileID: 591297889}
+  - component: {fileID: 591297890}
   m_Layer: 0
   m_Name: ModelController
   m_TagString: Untagged
@@ -508,8 +509,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   facemark_cascade_filepath: 
   facemark_model_filepath: 
-  FaceTiltAngle:
+  FaceTiltAngle: 0
+  IsEnableMeshRenderer:
     value: 0
+  IsUpdateResultImage: 1
+  IsDrawIndexNumber: 0
+  IsDrawLandmarkPointOutline: 0
+  IsDrawLandmarkLine: 0
+  _BikeModelController: {fileID: 591297890}
 --- !u!114 &591297887
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -585,7 +592,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 591297884}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -627,6 +634,20 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 591297884}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &591297890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 591297884}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2445e6e35aa6fd4098975f63ce8333d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BikeModel: {fileID: 3061233558973991566}
+  OffsetLeanAngle: 0
 --- !u!1 &1139670644
 GameObject:
   m_ObjectHideFlags: 0
