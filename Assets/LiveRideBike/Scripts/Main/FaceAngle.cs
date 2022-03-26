@@ -37,7 +37,6 @@ namespace Sunmax
         [HideInInspector, Tooltip("画像のZ軸角度")] private float RotateAngle = 0f;
         [HideInInspector, Tooltip("画像を回転させるときの1回あたりの角度")] private float AngleDiff = 1f;
         [HideInInspector, Range(10f, 45f), Tooltip("画像のZ軸の最大角度の絶対視")] private float MaxAngle = 45f;
-        [HideInInspector, Tooltip("顔認識できなかったときにUpdateをスキップするフラグ")] private bool SkipFrame = false;
 
         [Header("Debug用パラメータ"), Tooltip("以下、デバッグ時のON/OFFフラグ")]
         [SerializeField] private BoolReactiveProperty IsEnableMeshRenderer = new BoolReactiveProperty(false);
@@ -47,7 +46,8 @@ namespace Sunmax
         [SerializeField] private bool IsDrawLandmarkLine = false;
 
         [Header("Component")]
-        [SerializeField] private BikeModelController _BikeModelController;
+        [SerializeField] private BikeBehaviour _BikeBehaviour;
+        [SerializeField] private AvatarBehaviour _AvatarBehaviour;
         void Start()
         {
             Utils.setDebugMode(false);
@@ -59,6 +59,15 @@ namespace Sunmax
             facemark_cascade_filepath = "LiveRideBike_Data/StreamingAssets/" + FACEMARK_CASCADE_FILENAME;
             facemark_model_filepath ="LiveRideBike_Data/StreamingAssets/" +FACEMARK_MODEL_FILENAME;
 #endif
+            //事故防止のため、エディタ出ない場合はデバッグ用のフラグをすべてfalseとする
+#if !UNITY_EDITOR
+            IsEnableMeshRenderer.Value =false;
+            IsUpdateResultImage = false;
+            IsDrawIndexNumber = false;
+            IsDrawLandmarkPointOutline = false;
+            IsDrawLandmarkLine = false;
+#endif
+            //画像処理初期化
             Run();
 
             //メッシュレンダラーを非表示
@@ -78,19 +87,18 @@ namespace Sunmax
             //ヒストグラムを平坦化し明るさを調整
             Imgproc.equalizeHist(grayMat, grayMat);
             //顔認識しその結果を取得
-            // var rotateGrayMat = CVUtil.RotateMat(RotateAngle, grayMat);
-            var mat = DetectFace();
+            var mat = DetectFace(grayMat);
+            _BikeBehaviour.LeanBikeModel(FaceTiltAngle);
+            _BikeBehaviour.HandleAngle.Value = FaceTiltAngle;
             if (IsUpdateResultImage) Utils.matToTexture2D(mat, texture);
         }
 
-        Mat DetectFace()
+        Mat DetectFace(Mat mat)
         {
             var rotateGrayMat = CVUtil.RotateMat(RotateAngle, grayMat);
 
             //顔検出
-            cascade.detectMultiScale(
-                rotateGrayMat, faces, 1.1, 2, 2,
-                new Size(rotateGrayMat.cols() * 0.2, rotateGrayMat.rows() * 0.2));
+            cascade.detectMultiScale(rotateGrayMat, faces, 1.1, 2, 2, new Size(20, 20));
 
             //検出した顔が１つであれば処理
             if (faces.total() == 1)
@@ -100,9 +108,18 @@ namespace Sunmax
                 facemark.fit(rotateGrayMat, faces, landmarks);
 
                 //ランドマークを描画
-                FaceTiltAngle = CVUtil.DrawLandMark(
-                    rotateGrayMat, landmarks, RotateAngle,
-                    IsDrawIndexNumber, IsDrawLandmarkLine, IsDrawLandmarkPointOutline);
+                for (int i = 0; i < landmarks.Count; i++)
+                {
+                    MatOfPoint2f landmark = landmarks[i];
+                    float[] lm_float = new float[landmark.total() * landmark.channels()];
+                    MatUtils.copyFromMat<float>(landmark, lm_float);
+                    var points = CVUtil.ConvertArrayToPointList(lm_float);
+                    CVUtil.DrawLandmark(rotateGrayMat, lm_float, points,
+                     IsDrawIndexNumber, IsDrawLandmarkLine, IsDrawLandmarkPointOutline);
+
+                    //ランドマークから顔の傾きを計算
+                    FaceTiltAngle = CVUtil.CalculateFaceTiltAngle(points[0], points[16]) + RotateAngle;
+                }
             }
             //検出した顔が１つもなければ処理する画像を回転させて再度検出処理を行う
             else
@@ -111,12 +128,12 @@ namespace Sunmax
                 if (Math.Abs(RotateAngle + AngleDiff) < MaxAngle)
                 {
                     RotateAngle = RotateAngle + AngleDiff;
-                    DetectFace();
+                    DetectFace(rotateGrayMat);
                 }
                 //範囲外であれば増分値の符号を反転させる
                 else AngleDiff *= -1f;
             }
-            _BikeModelController.LeanBikeModel(FaceTiltAngle);
+
             return rotateGrayMat;
         }
 
@@ -149,6 +166,5 @@ namespace Sunmax
         {
             Debug.Log("OnWebCamTextureToMatHelperErrorOccurred " + errorCode);
         }
-
     }
 }
