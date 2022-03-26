@@ -74,9 +74,18 @@ namespace Sunmax
             IsEnableMeshRenderer.Subscribe(x => { gameObject.transform.GetComponent<MeshRenderer>().enabled = x; }).AddTo(this);
 
             //Updateをストリームに変換
-            this.UpdateAsObservable().Subscribe(_ => { WebCamImg2DetectFace(); }).AddTo(this);
-        }
+            this.UpdateAsObservable().Subscribe(_ =>
+            {
+                //ウェブカメラから映像を取得し画像処理、描画
+                WebCamImg2DetectFace();
 
+                //各コンポーネントの値を更新
+                _BikeBehaviour.LeanBikeModel(FaceTiltAngle);
+                _BikeBehaviour.HandleAngle.Value = FaceTiltAngle;
+                _AvatarBehaviour.leftBendSwivelOffset.Value = Mathf.Abs(FaceTiltAngle);
+                _AvatarBehaviour.rightBendSwivelOffset.Value = -Mathf.Abs(FaceTiltAngle);
+            }).AddTo(this);
+        }
         private void WebCamImg2DetectFace()
         {
             if (facemark == null || cascade == null) return;
@@ -88,11 +97,9 @@ namespace Sunmax
             Imgproc.equalizeHist(grayMat, grayMat);
             //顔認識しその結果を取得
             var mat = DetectFace(grayMat);
-            _BikeBehaviour.LeanBikeModel(FaceTiltAngle);
-            _BikeBehaviour.HandleAngle.Value = FaceTiltAngle;
+            //結果描写
             if (IsUpdateResultImage) Utils.matToTexture2D(mat, texture);
         }
-
         Mat DetectFace(Mat mat)
         {
             var rotateGrayMat = CVUtil.RotateMat(RotateAngle, grayMat);
@@ -115,7 +122,7 @@ namespace Sunmax
                     MatUtils.copyFromMat<float>(landmark, lm_float);
                     var points = CVUtil.ConvertArrayToPointList(lm_float);
                     CVUtil.DrawLandmark(rotateGrayMat, lm_float, points,
-                     IsDrawIndexNumber, IsDrawLandmarkLine, IsDrawLandmarkPointOutline);
+                        IsDrawIndexNumber, IsDrawLandmarkLine, IsDrawLandmarkPointOutline);
 
                     //ランドマークから顔の傾きを計算
                     FaceTiltAngle = CVUtil.CalculateFaceTiltAngle(points[0], points[16]) + RotateAngle;
