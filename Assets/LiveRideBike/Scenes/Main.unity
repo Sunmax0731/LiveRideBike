@@ -198,6 +198,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 213357766}
+  - component: {fileID: 213357767}
+  - component: {fileID: 213357768}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -222,6 +224,37 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &213357767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 213357765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41d910fb724d9ab4e8a7ef121d0a457f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CameraList:
+  - {fileID: 1793770348}
+  - {fileID: 558822487}
+  - {fileID: 519673025}
+  EnableCameraIndex:
+    value: 0
+--- !u!114 &213357768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 213357765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 029905ad9271baf488ca8db84c9dc6fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _CameraSwitcher: {fileID: 213357767}
 --- !u!1 &519673022
 GameObject:
   m_ObjectHideFlags: 0
@@ -232,7 +265,6 @@ GameObject:
   m_Component:
   - component: {fileID: 519673023}
   - component: {fileID: 519673025}
-  - component: {fileID: 519673024}
   - component: {fileID: 519673026}
   m_Layer: 0
   m_Name: SubCamera2
@@ -240,7 +272,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &519673023
 Transform:
   m_ObjectHideFlags: 0
@@ -255,14 +287,6 @@ Transform:
   m_Father: {fileID: 213357766}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!81 &519673024
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519673022}
-  m_Enabled: 1
 --- !u!20 &519673025
 Camera:
   m_ObjectHideFlags: 0
@@ -366,7 +390,6 @@ GameObject:
   m_Component:
   - component: {fileID: 558822485}
   - component: {fileID: 558822487}
-  - component: {fileID: 558822486}
   - component: {fileID: 558822488}
   m_Layer: 0
   m_Name: SubCamera1
@@ -374,7 +397,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &558822485
 Transform:
   m_ObjectHideFlags: 0
@@ -389,14 +412,6 @@ Transform:
   m_Father: {fileID: 213357766}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!81 &558822486
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 558822484}
-  m_Enabled: 1
 --- !u!20 &558822487
 Camera:
   m_ObjectHideFlags: 0
@@ -648,14 +663,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0d66fe20cf6f3045a0c4c753976430d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LeftLegOffset:
+  _VRIK: {fileID: 4232748744913891052}
+  SqiveOffsetSensitivity: 5
+  leftBendSwivelOffset:
     value: 0
-  LeftLeg: {fileID: 2005960800}
-  LeftLegBend: {fileID: 1304816680}
-  RightLegOffset:
+  rightBendSwivelOffset:
     value: 0
-  RightLeg: {fileID: 1520686276}
-  RightLegBend: {fileID: 1139670645}
 --- !u!114 &591297891
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -704,7 +717,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1139670644}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.22, y: 0.77, z: -0.057400003}
+  m_LocalPosition: {x: 0.19, y: 0.754, z: -0.020999998}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1327409091}
@@ -734,7 +747,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1304816679}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.22, y: 0.87, z: -0.057400003}
+  m_LocalPosition: {x: -0.2026, y: 0.7405, z: -0.0069999993}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1327409091}
@@ -830,8 +843,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1520686275}
-  m_LocalRotation: {x: 0.9664006, y: -0, z: -0, w: -0.25704074}
-  m_LocalPosition: {x: 0.231, y: 0.43, z: -0.326}
+  m_LocalRotation: {x: 0.9774159, y: -0, z: -0, w: -0.21132468}
+  m_LocalPosition: {x: 0.211, y: 0.4298, z: -0.3179}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1327409091}
@@ -937,7 +950,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1793770349}
   - component: {fileID: 1793770348}
-  - component: {fileID: 1793770347}
   - component: {fileID: 1793770350}
   m_Layer: 0
   m_Name: FrontCamera
@@ -946,14 +958,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &1793770347
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1793770346}
-  m_Enabled: 1
 --- !u!20 &1793770348
 Camera:
   m_ObjectHideFlags: 0
@@ -1054,8 +1058,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1802957305}
-  m_LocalRotation: {x: 0.1564345, y: -0, z: -0, w: 0.98768836}
-  m_LocalPosition: {x: 0, y: 1.114, z: 0.06700002}
+  m_LocalRotation: {x: 0.03697193, y: 0.007013603, z: 0.03770818, w: 0.99858}
+  m_LocalPosition: {x: -0.10614287, y: 1.1089318, z: 0.06700002}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1327409091}
@@ -1177,8 +1181,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2005960799}
-  m_LocalRotation: {x: 0.3176317, y: -0, z: -0, w: 0.9482142}
-  m_LocalPosition: {x: -0.2052, y: 0.3846, z: -0.2578}
+  m_LocalRotation: {x: 0.34341377, y: -0, z: -0, w: 0.9391842}
+  m_LocalPosition: {x: -0.2052, y: 0.399, z: -0.281}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1327409091}
@@ -1749,7 +1753,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1318266424876237699
 GameObject:
   m_ObjectHideFlags: 0
@@ -3444,9 +3448,9 @@ MonoBehaviour:
       rotationWeight: 1
       bendGoal: {fileID: 1304816680}
       bendGoalWeight: 1
-      swivelOffset: 110
-      bendToTargetWeight: 0
-      legLengthMlp: 0.9
+      swivelOffset: 135
+      bendToTargetWeight: 1
+      legLengthMlp: 1
       stretchCurve:
         serializedVersion: 2
         m_Curve:
@@ -3516,9 +3520,9 @@ MonoBehaviour:
       rotationWeight: 1
       bendGoal: {fileID: 1139670645}
       bendGoalWeight: 1
-      swivelOffset: -130
-      bendToTargetWeight: 0
-      legLengthMlp: 0.9
+      swivelOffset: -135
+      bendToTargetWeight: 1
+      legLengthMlp: 1
       stretchCurve:
         serializedVersion: 2
         m_Curve:
@@ -3555,7 +3559,7 @@ MonoBehaviour:
       useAnimatedBendNormal: 0
     locomotion:
       mode: 0
-      weight: 1
+      weight: 0
       moveThreshold: 0.3
       animationHeader: 0
       minAnimationSpeed: 0.2
