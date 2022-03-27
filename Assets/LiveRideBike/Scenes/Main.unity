@@ -242,6 +242,8 @@ MonoBehaviour:
   - {fileID: 519673025}
   EnableCameraIndex:
     value: 0
+  BackgroundColor:
+    value: {r: 255, g: 0, b: 255, a: 255}
 --- !u!114 &213357768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -254,7 +256,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 029905ad9271baf488ca8db84c9dc6fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _CameraSwitcher: {fileID: 213357767}
+  _CameraSetting: {fileID: 213357767}
 --- !u!1 &519673022
 GameObject:
   m_ObjectHideFlags: 0
@@ -297,7 +299,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0, g: 1, b: 0, a: 0}
+  m_BackGroundColor: {r: 1, g: 0, b: 1, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -422,7 +424,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0, g: 1, b: 0, a: 0}
+  m_BackGroundColor: {r: 1, g: 0, b: 1, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -681,7 +683,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c60099ddc744ea449c0b6e1b246fd95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BikeModel: {fileID: 5090180719969381599}
+  BikeModel: {fileID: 0}
   OffsetLeanAngle: 0
   Handle: {fileID: 3339799559336760140}
   TiltSensitivity: 5
@@ -968,7 +970,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0, g: 0, b: 1, a: 0}
+  m_BackGroundColor: {r: 1, g: 0, b: 1, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1058,13 +1060,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1802957305}
-  m_LocalRotation: {x: 0.03697193, y: 0.007013603, z: 0.03770818, w: 0.99858}
-  m_LocalPosition: {x: -0.10614287, y: 1.1089318, z: 0.06700002}
+  m_LocalRotation: {x: 0.17364816, y: 0, z: 0, w: 0.9848078}
+  m_LocalPosition: {x: 0, y: 1.1089318, z: 0.06700002}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1327409091}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 18, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 20, y: 0, z: 0}
 --- !u!1 &1994495004
 GameObject:
   m_ObjectHideFlags: 0
