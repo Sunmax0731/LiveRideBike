@@ -4,7 +4,7 @@ using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
 
-public class CameraSwitcher : MonoBehaviour
+public class CameraSettings : MonoBehaviour
 {
     [SerializeField] public List<Camera> CameraList;
     [SerializeField] public IntReactiveProperty EnableCameraIndex = new IntReactiveProperty(0);
