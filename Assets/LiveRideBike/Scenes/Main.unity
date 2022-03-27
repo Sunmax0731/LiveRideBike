@@ -256,7 +256,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 029905ad9271baf488ca8db84c9dc6fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+<<<<<<< HEAD
   _CameraSetting: {fileID: 213357767}
+=======
+  _CameraSettings: {fileID: 213357767}
+>>>>>>> MainScene
 --- !u!1 &519673022
 GameObject:
   m_ObjectHideFlags: 0

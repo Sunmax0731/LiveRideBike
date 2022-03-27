@@ -4,8 +4,9 @@ using Cysharp.Threading.Tasks;
 using Cysharp.Threading.Tasks.Triggers;
 using UniRx;
 using UnityEngine;
-public class CameraPresenter : MonoBehaviour
+namespace Sunmax
 {
+<<<<<<< HEAD
     [SerializeField] private CameraSetting _CameraSetting;
 
     void Start()
@@ -13,5 +14,18 @@ public class CameraPresenter : MonoBehaviour
         Observable.EveryUpdate()
             .Where(_ => Input.GetKeyDown(KeyCode.C))
             .Subscribe(_ =>_CameraSetting.IncrementalCameraIndex());
+=======
+    public class CameraPresenter : MonoBehaviour
+    {
+        [SerializeField] private CameraSettings _CameraSettings;
+
+        void Start()
+        {
+            Observable.EveryUpdate()
+                .Where(_ => Input.GetKeyDown(KeyCode.C))
+                .Subscribe(_ => _CameraSettings.IncrementalCameraIndex());
+        }
+
+>>>>>>> MainScene
     }
 }
