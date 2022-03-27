@@ -8,16 +8,26 @@ public class CameraSettings : MonoBehaviour
 {
     [SerializeField] public List<Camera> CameraList;
     [SerializeField] public IntReactiveProperty EnableCameraIndex = new IntReactiveProperty(0);
-    // Start is called before the first frame update
+    [SerializeField] public ColorReactiveProperty CameraBackgroundColor = new ColorReactiveProperty(new Color(255, 0, 255, 255));
     void Start()
     {
         EnableCameraIndex.Subscribe(x => EnableCamera(x));
+        CameraBackgroundColor.Subscribe(x => SetBackgroundColor(x));
     }
 
-    public int IncrementalCameraIndex(int currentIndex, int listSize)
+    public void IncrementalCameraIndex()
     {
-        if (currentIndex + 1 > listSize) return 0;
-        return ++currentIndex;
+        var newIndex = EnableCameraIndex.Value + 1;
+        if (newIndex + 1 > CameraList.Count)
+        {
+            EnableCameraIndex.Value = 0;
+            return;
+        };
+        EnableCameraIndex.Value = newIndex;
+    }
+    private void SetBackgroundColor(Color color)
+    {
+        CameraList.ForEach(x => x.backgroundColor = color);
     }
     private void EnableCamera(int index)
     {
