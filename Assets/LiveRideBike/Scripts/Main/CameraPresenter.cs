@@ -16,6 +16,5 @@ namespace Sunmax
                 .Where(_ => Input.GetKeyDown(KeyCode.C))
                 .Subscribe(_ => _CameraSettings.IncrementalCameraIndex());
         }
-
     }
 }
