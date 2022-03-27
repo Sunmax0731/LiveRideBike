@@ -6,15 +6,6 @@ using UniRx;
 using UnityEngine;
 namespace Sunmax
 {
-<<<<<<< HEAD
-    [SerializeField] private CameraSetting _CameraSetting;
-
-    void Start()
-    {
-        Observable.EveryUpdate()
-            .Where(_ => Input.GetKeyDown(KeyCode.C))
-            .Subscribe(_ =>_CameraSetting.IncrementalCameraIndex());
-=======
     public class CameraPresenter : MonoBehaviour
     {
         [SerializeField] private CameraSettings _CameraSettings;
@@ -25,7 +16,5 @@ namespace Sunmax
                 .Where(_ => Input.GetKeyDown(KeyCode.C))
                 .Subscribe(_ => _CameraSettings.IncrementalCameraIndex());
         }
-
->>>>>>> MainScene
     }
 }
