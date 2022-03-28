@@ -665,7 +665,7 @@ GameObject:
   - component: {fileID: 353268856}
   - component: {fileID: 353268855}
   m_Layer: 0
-  m_Name: Tab2
+  m_Name: Tab2_Offset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1010,7 +1010,7 @@ GameObject:
   - component: {fileID: 530145517}
   - component: {fileID: 530145516}
   m_Layer: 0
-  m_Name: Tab1
+  m_Name: Tab1_Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1398,7 +1398,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c60099ddc744ea449c0b6e1b246fd95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BikeModel: {fileID: 0}
+  BikeModel: {fileID: 5090180719969381599}
   OffsetLeanAngle: 0
   Handle: {fileID: 3339799559336760140}
   TiltSensitivity: 5
@@ -1423,7 +1423,7 @@ GameObject:
   - component: {fileID: 733178977}
   - component: {fileID: 733178976}
   m_Layer: 0
-  m_Name: Tab4
+  m_Name: Tab4_Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1681,7 +1681,7 @@ GameObject:
   - component: {fileID: 1108289449}
   - component: {fileID: 1108289448}
   m_Layer: 0
-  m_Name: Tab3
+  m_Name: Tab3_Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1957,7 +1957,7 @@ GameObject:
   - component: {fileID: 1254693820}
   - component: {fileID: 1254693819}
   m_Layer: 0
-  m_Name: Tab5
+  m_Name: Tab5_IKsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
