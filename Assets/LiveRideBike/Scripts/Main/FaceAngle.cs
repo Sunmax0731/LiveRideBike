@@ -56,8 +56,8 @@ namespace Sunmax
             facemark_cascade_filepath = Utils.getFilePath(FACEMARK_CASCADE_FILENAME);
             facemark_model_filepath = Utils.getFilePath(FACEMARK_MODEL_FILENAME);
 #elif UNITY_STANDALONE_WIN
-            facemark_cascade_filepath = "LiveRideBike_Data/StreamingAssets/" + FACEMARK_CASCADE_FILENAME;
-            facemark_model_filepath ="LiveRideBike_Data/StreamingAssets/" +FACEMARK_MODEL_FILENAME;
+            facemark_cascade_filepath =  Application.productName + "_Data/StreamingAssets/" + FACEMARK_CASCADE_FILENAME;
+            facemark_model_filepath = Application.productName + "_Data/StreamingAssets/" +FACEMARK_MODEL_FILENAME;
 #endif
             //事故防止のため、エディタ出ない場合はデバッグ用のフラグをすべてfalseとする
 #if !UNITY_EDITOR
