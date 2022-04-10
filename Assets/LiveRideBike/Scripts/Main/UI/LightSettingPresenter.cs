@@ -49,6 +49,51 @@ namespace Sunmax
                 .AddTo(this);
 
             LightColor.Subscribe(color => Light.color = color);
+
+            RegisterButton.onClick.AsObservable().Subscribe(_ =>
+            {
+                PlayerPrefs.SetFloat(PlayerPref.LightParameterKey.XRotate.ToString(), XRotateSlider.value);
+                PlayerPrefs.SetFloat(PlayerPref.LightParameterKey.YRotate.ToString(), YRotateSlider.value);
+                PlayerPrefs.SetFloat(PlayerPref.LightParameterKey.Intensity.ToString(), IntensitySlider.value);
+
+                PlayerPrefs.SetFloat(PlayerPref.LightParameterKey.Color_Red.ToString(), RedSlider.value);
+                PlayerPrefs.SetFloat(PlayerPref.LightParameterKey.Color_Green.ToString(), GreenSlider.value);
+                PlayerPrefs.SetFloat(PlayerPref.LightParameterKey.Color_Blue.ToString(), BlueSlider.value);
+
+                PlayerPrefs.Save();
+            });
+
+            LoadButton.onClick.AsObservable().Subscribe(_ =>
+            {
+                XRotateSlider.value = PlayerPrefs.GetFloat(PlayerPref.LightParameterKey.XRotate.ToString(), 0f);
+                YRotateSlider.value = PlayerPrefs.GetFloat(PlayerPref.LightParameterKey.YRotate.ToString(), 0f);
+                IntensitySlider.value = PlayerPrefs.GetFloat(PlayerPref.LightParameterKey.Intensity.ToString(), 0f);
+
+                RedSlider.value = PlayerPrefs.GetFloat(PlayerPref.LightParameterKey.Color_Red.ToString(), 0f);
+                GreenSlider.value = PlayerPrefs.GetFloat(PlayerPref.LightParameterKey.Color_Green.ToString(), 0f);
+                BlueSlider.value = PlayerPrefs.GetFloat(PlayerPref.LightParameterKey.Color_Blue.ToString(), 0f);
+            });
+
+            InitButton.onClick.AsObservable().Subscribe(_ =>
+            {
+                XRotateSlider.value = 50f;
+                YRotateSlider.value = -30f;
+                IntensitySlider.value = 1f;
+
+                RedSlider.value = 1f;
+                GreenSlider.value = 1f;
+                BlueSlider.value = 1f;
+
+                PlayerPrefs.SetFloat(PlayerPref.LightParameterKey.XRotate.ToString(), XRotateSlider.value);
+                PlayerPrefs.SetFloat(PlayerPref.LightParameterKey.YRotate.ToString(), YRotateSlider.value);
+                PlayerPrefs.SetFloat(PlayerPref.LightParameterKey.Intensity.ToString(), IntensitySlider.value);
+
+                PlayerPrefs.SetFloat(PlayerPref.LightParameterKey.Color_Red.ToString(), RedSlider.value);
+                PlayerPrefs.SetFloat(PlayerPref.LightParameterKey.Color_Green.ToString(), GreenSlider.value);
+                PlayerPrefs.SetFloat(PlayerPref.LightParameterKey.Color_Blue.ToString(), BlueSlider.value);
+
+                PlayerPrefs.Save();
+            });
         }
     }
 }
