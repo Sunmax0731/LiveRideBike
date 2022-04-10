@@ -1,19 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using OpenCVForUnity.UnityUtils.Helper;
 using UnityEngine;
-
-public class WebCamSelector : MonoBehaviour
+namespace Sunmax
 {
-
-    // Start is called before the first frame update
-    void Start()
+    public class WebCamSelector : MonoBehaviour
     {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        [SerializeField] private string DefaultCameraName = "";
+        [SerializeField] private WebCamTextureToMatHelper webcamHelper;
+        void Start()
+        {
+            var cameraName = PlayerPrefs.GetString("UseCameraName", "");
+            if (cameraName != "") DefaultCameraName = cameraName;
+            webcamHelper.requestedDeviceName = DefaultCameraName;
+            webcamHelper.enabled = true;
+        }
     }
 }
