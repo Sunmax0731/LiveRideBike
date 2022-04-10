@@ -9,7 +9,7 @@ public class BikeBehaviour : MonoBehaviour
     [Header("Bike"), Tooltip("バイクオブジェクトのルートを設定")]
     [SerializeField] private Transform BikeModel;
     [Header("Parameter")]
-    [SerializeField] private float OffsetLeanAngle = 0f;
+    [SerializeField] public float OffsetLeanAngle = 0f;
 
     [Header("Handle"), Tooltip("バイクオブジェクトのHandleボーンを設定")]
     [SerializeField] private Transform Handle;
