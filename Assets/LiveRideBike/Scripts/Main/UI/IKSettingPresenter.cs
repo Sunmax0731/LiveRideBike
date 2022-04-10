@@ -115,7 +115,7 @@ namespace Sunmax
             HandSlider_X.OnValueChangedAsObservable().Subscribe(x =>
             {
                 var leftPos = LeftHand.localPosition;
-                leftPos.x = x + LeftHandDefaultPosition.x;
+                leftPos.x = -x + LeftHandDefaultPosition.x;
                 LeftHand.localPosition = leftPos;
 
                 var rightPos = RightHand.localPosition;
@@ -125,7 +125,7 @@ namespace Sunmax
             HandSlider_Y.OnValueChangedAsObservable().Subscribe(x =>
            {
                var leftPos = LeftHand.localPosition;
-               leftPos.y = x + LeftHandDefaultPosition.y;
+               leftPos.y = -x + LeftHandDefaultPosition.y;
                LeftHand.localPosition = leftPos;
 
                var rightPos = RightHand.localPosition;
@@ -135,7 +135,7 @@ namespace Sunmax
             HandSlider_Z.OnValueChangedAsObservable().Subscribe(x =>
             {
                 var leftPos = LeftHand.localPosition;
-                leftPos.z = x + LeftHandDefaultPosition.z;
+                leftPos.z = -x + LeftHandDefaultPosition.z;
                 LeftHand.localPosition = leftPos;
 
                 var rightPos = RightHand.localPosition;
@@ -146,7 +146,7 @@ namespace Sunmax
             KneeSlider_X.OnValueChangedAsObservable().Subscribe(x =>
             {
                 var leftPos = LefgLeg_Bend.localPosition;
-                leftPos.x = x + LeftKneeDefaultPosition.x;
+                leftPos.x = -x + LeftKneeDefaultPosition.x;
                 LefgLeg_Bend.localPosition = leftPos;
 
                 var rightPos = RightLeg_Bend.localPosition;
@@ -178,7 +178,7 @@ namespace Sunmax
             FootSlider_X.OnValueChangedAsObservable().Subscribe(x =>
             {
                 var leftPos = LeftLeg.localPosition;
-                leftPos.x = x + LeftFootDefaultPosition.x;
+                leftPos.x = -x + LeftFootDefaultPosition.x;
                 LeftLeg.localPosition = leftPos;
 
                 var rightPos = RightLeg.localPosition;
