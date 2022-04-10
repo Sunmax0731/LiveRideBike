@@ -20,6 +20,7 @@ public class MainMenuPresenter : MonoBehaviour
             item.onClick.AsObservable().Subscribe(_ => _MainMenuMangaer.EnableTab(index)).AddTo(this);
         }
         _MainMenuMangaer.EnableTab(-1);
+
         //ESCキーでメニューのオンオフ
         this.UpdateAsObservable()
             .Where(_ => Input.GetKeyDown(KeyCode.Space))
