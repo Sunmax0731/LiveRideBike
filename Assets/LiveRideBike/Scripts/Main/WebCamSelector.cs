@@ -8,12 +8,15 @@ namespace Sunmax
     {
         [SerializeField] private string DefaultCameraName = "";
         [SerializeField] private WebCamTextureToMatHelper webcamHelper;
+        [SerializeField] private FaceAngle faceAngle;
         void Start()
         {
-            var cameraName = PlayerPrefs.GetString("UseCameraName", "");
+            var cameraName = PlayerPrefs.GetString(PlayerPref.UseCameraName.ToString(), "");
+
             if (cameraName != "") DefaultCameraName = cameraName;
             webcamHelper.requestedDeviceName = DefaultCameraName;
             webcamHelper.enabled = true;
+            faceAngle.enabled = true;
         }
     }
 }
