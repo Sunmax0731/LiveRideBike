@@ -11527,7 +11527,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1720986471}
   m_Direction: 0
   m_MinValue: -1
-  m_MaxValue: 1
+  m_MaxValue: 0.5
   m_WholeNumbers: 0
   m_Value: 0
   m_OnValueChanged:
@@ -16239,7 +16239,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 720089293}
   m_Direction: 0
   m_MinValue: -1
-  m_MaxValue: 1
+  m_MaxValue: 0.15
   m_WholeNumbers: 0
   m_Value: 0
   m_OnValueChanged:
@@ -20013,8 +20013,8 @@ MonoBehaviour:
   m_FillRect: {fileID: 714953769}
   m_HandleRect: {fileID: 667103381}
   m_Direction: 0
-  m_MinValue: -1
-  m_MaxValue: 1
+  m_MinValue: -0.5
+  m_MaxValue: 0.5
   m_WholeNumbers: 0
   m_Value: 0
   m_OnValueChanged:

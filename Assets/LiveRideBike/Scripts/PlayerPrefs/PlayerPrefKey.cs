@@ -45,5 +45,11 @@ namespace Sunmax
             Foot_Y,
             Foot_Z,
         }
+        public enum CameraKey
+        {
+            Distance,
+            Height,
+            Depth
+        }
     }
 }
