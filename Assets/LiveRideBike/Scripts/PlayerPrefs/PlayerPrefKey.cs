@@ -6,6 +6,7 @@ namespace Sunmax
 {
     static public class PlayerPref
     {
+        static public string VRMFileName = "YumehaHero.vrm";
         static public string UseCameraName = "UseCameraName";
         public enum BackgroundColorKey
         {
