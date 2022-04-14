@@ -16,6 +16,8 @@ namespace Sunmax
     public class AvatarLoader : MonoBehaviour
     {
 
+        [SerializeField] private bool DebugDefaultVRMLoad = true;
+        [SerializeField] private string DefaultVRMFile = "";
         [SerializeField] private string LoadVRMFilePath = "";
         [SerializeField] private AvatarBehaviour AvatarBehaviour;
         HumanPoseTransfer m_src = default;
@@ -121,7 +123,9 @@ namespace Sunmax
 
         void Start()
         {
-            LoadVRMFilePath = Application.streamingAssetsPath + "/VRM/" + PlayerPref.VRMFileName;
+            LoadVRMFilePath = DebugDefaultVRMLoad
+            ? Application.streamingAssetsPath + "/VRM/" + DefaultVRMFile
+            : Application.streamingAssetsPath + "/VRM/" + PlayerPref.VRMFileName;
 
             LoadModelAsync(LoadVRMFilePath);
         }

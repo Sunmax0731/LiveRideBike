@@ -11,6 +11,7 @@ namespace Sunmax
     {
         [Header("AvatarIK")]
         [SerializeField] private VRIK _VRIK;
+        [SerializeField] private bool SwitchBendSwivelOffset = false;
         [SerializeField, Range(1f, 10f)] public float SqiveOffsetSensitivity = 0f;
         [SerializeField] public FloatReactiveProperty leftBendSwivelOffset = new FloatReactiveProperty(0f);
         [HideInInspector] private float defaultLeftBendSqivelOffset;
@@ -35,7 +36,8 @@ namespace Sunmax
 
         private void UpdateBendSwiveOffset(float offset, float defaultValue, IKSolverVR.Leg leg)
         {
-            leg.swivelOffset = defaultValue - offset;
+
+            leg.swivelOffset = SwitchBendSwivelOffset ? -(defaultValue - offset) : defaultValue - offset;
         }
         public void SetVRIKComponent(VRIK component)
         {
