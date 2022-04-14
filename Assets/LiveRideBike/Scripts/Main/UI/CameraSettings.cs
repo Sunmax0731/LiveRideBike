@@ -15,13 +15,8 @@ namespace Sunmax
         [SerializeField] public Vector3ReactiveProperty TargetPosition;
         void Start()
         {
-            // EnableCameraIndex.Subscribe(x => EnableCamera(x));
             CameraBackgroundColor.Subscribe(x => SetBackgroundColor(x));
-
-            TargetPosition.Subscribe(pos =>
-            {
-                LookAtTarget(pos);
-            });
+            TargetPosition.Subscribe(pos => { LookAtTarget(pos); });
         }
 
         public void IncrementalCameraIndex()
